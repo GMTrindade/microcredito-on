@@ -18,7 +18,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyA3AJBWQyS_AYZB-61ES1DPwMPIgfCJ6pc",
   authDomain: "microcredito-on.firebaseapp.com",
   projectId: "microcredito-on",
-  storageBucket: "microcredito-on.firebasestorage.app",
+  storageBucket: ""microcredito-on.appspot.com"",
   messagingSenderId: "1072247220735",
   appId: "1:1072247220735:web:179e565b371aa97fdf1fca",
   measurementId: "G-6TM84Z1EYF"
