@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Empréstimo — Microcredito On</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html"><img src="assets/logo.png" alt="Microcredito On" class="logo"></a>
+  </header>
+
+  <!-- Progress Steps -->
+  <div class="progress-steps">
+    <div class="step active" id="step-indicator-1">
+      <div class="step-dot">1</div>
+      <div class="step-label">Dados</div>
+    </div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step" id="step-indicator-2">
+      <div class="step-dot">2</div>
+      <div class="step-label">Documentos</div>
+    </div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step" id="step-indicator-3">
+      <div class="step-dot">3</div>
+      <div class="step-label">Taxa</div>
+    </div>
+    <div class="step-line" id="line-3"></div>
+    <div class="step" id="step-indicator-4">
+      <div class="step-dot">4</div>
+      <div class="step-label">Pagamento</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-content">
+
+      <!-- STEP 1: Dados pessoais -->
+      <div id="form-step-1" class="animate-in">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Seus dados pessoais</div>
+            <div class="card-subtitle">Preencha todas as informações corretamente</div>
+
+            <div id="alert-cpf" class="alert alert-error" style="display:none">
+              <span>⚠️</span>
+              <span id="alert-cpf-msg">Você já possui uma solicitação em andamento.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nome Completo <span class="req">*</span></label>
+              <input type="text" id="nome" class="form-control" placeholder="Seu nome completo" autocomplete="name">
+              <span class="form-error" id="err-nome">Informe seu nome completo</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">CPF <span class="req">*</span></label>
+                <input type="text" id="cpf" class="form-control" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
+                <span class="form-error" id="err-cpf">CPF inválido</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Telefone <span class="req">*</span></label>
+                <input type="text" id="telefone" class="form-control" placeholder="(00) 00000-0000" maxlength="15" inputmode="tel">
+                <span class="form-error" id="err-tel">Telefone inválido</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">E-mail <span class="req">*</span></label>
+              <input type="email" id="email" class="form-control" placeholder="seu@email.com" autocomplete="email">
+              <span class="form-error" id="err-email">E-mail inválido</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Renda Mensal <span class="req">*</span></label>
+                <input type="text" id="renda" class="form-control" placeholder="R$ 0,00" inputmode="numeric">
+                <span class="form-error" id="err-renda">Informe sua renda</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Valor Solicitado <span class="req">*</span></label>
+                <input type="text" id="valor" class="form-control" placeholder="R$ 0,00" inputmode="numeric">
+                <span class="form-error" id="err-valor">Valor inválido (mín. R$ 100)</span>
+              </div>
+            </div>
+
+            <!-- Taxa preview -->
+            <div id="taxa-preview" style="display:none" class="alert alert-info">
+              <span>💡</span>
+              <span>Taxa administrativa (10%): <strong id="taxa-preview-value">-</strong></span>
+            </div>
+
+            <button class="btn btn-green btn-full mt-4" id="btn-step1" onclick="irStep2()">
+              Continuar → Documentos
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Documentos -->
+      <div id="form-step-2" style="display:none" class="animate-in">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Envio de Documentos</div>
+            <div class="card-subtitle">Necessário para validar sua identidade</div>
+
+            <div class="form-group">
+              <label class="form-label">RG ou CNH (frente) <span class="req">*</span></label>
+              <div class="upload-area" id="upload-rg-area">
+                <input type="file" id="upload-rg" accept="image/jpeg,image/png,application/pdf" onchange="previewFile(this, 'preview-rg', 'upload-rg-area')">
+                <div class="upload-icon">🪪</div>
+                <div class="upload-text">Clique ou arraste aqui</div>
+                <div class="upload-hint">JPG, PNG ou PDF • Máx. 10MB</div>
+              </div>
+              <div class="upload-preview" id="preview-rg">
+                <span>✅</span>
+                <span class="upload-preview-name" id="preview-rg-name">-</span>
+              </div>
+              <span class="form-error" id="err-rg">Envie o documento de identidade</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Selfie segurando o documento <span class="req">*</span></label>
+              <div class="upload-area" id="upload-selfie-area">
+                <input type="file" id="upload-selfie" accept="image/jpeg,image/png" onchange="previewFile(this, 'preview-selfie', 'upload-selfie-area')">
+                <div class="upload-icon">🤳</div>
+                <div class="upload-text">Clique ou arraste aqui</div>
+                <div class="upload-hint">JPG ou PNG • Máx. 10MB</div>
+              </div>
+              <div class="upload-preview" id="preview-selfie">
+                <span>✅</span>
+                <span class="upload-preview-name" id="preview-selfie-name">-</span>
+              </div>
+              <span class="form-error" id="err-selfie">Envie a selfie com documento</span>
+            </div>
+
+            <div class="alert alert-warning">
+              <span>📌</span>
+              <span>Certifique-se que os documentos estão legíveis e sem reflexos. Selfie: segure o documento ao lado do rosto.</span>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:16px;">
+              <button class="btn btn-outline" onclick="voltarStep(1)" style="flex:1">← Voltar</button>
+              <button class="btn btn-green" id="btn-step2" onclick="irStep3()" style="flex:2">
+                Continuar → Taxa
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Taxa -->
+      <div id="form-step-3" style="display:none" class="animate-in">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Taxa Administrativa</div>
+            <div class="card-subtitle">Confirme os valores antes de prosseguir</div>
+
+            <div class="taxa-box">
+              <div class="taxa-label">Taxa Administrativa (10%)</div>
+              <div class="taxa-value" id="taxa-display">R$ 0,00</div>
+              <div class="taxa-note">Sobre o valor solicitado de <span id="valor-display">-</span></div>
+            </div>
+
+            <ul class="info-list" style="margin-bottom:20px;">
+              <li class="info-item">
+                <span class="info-key">Nome</span>
+                <span class="info-value" id="confirm-nome">-</span>
+              </li>
+              <li class="info-item">
+                <span class="info-key">CPF</span>
+                <span class="info-value" id="confirm-cpf">-</span>
+              </li>
+              <li class="info-item">
+                <span class="info-key">Valor Solicitado</span>
+                <span class="info-value" id="confirm-valor">-</span>
+              </li>
+              <li class="info-item">
+                <span class="info-key">Taxa Administrativa</span>
+                <span class="info-value" id="confirm-taxa" style="color:var(--gold)">-</span>
+              </li>
+            </ul>
+
+            <div class="alert alert-info">
+              <span>ℹ️</span>
+              <span>A taxa administrativa é cobrada para cobertura de custos operacionais de análise e processamento da sua solicitação.</span>
+            </div>
+
+            <div id="sending-status" style="display:none" class="alert alert-info">
+              <span class="spinner" style="border-color: rgba(29,78,216,0.3); border-top-color: #1d4ed8;"></span>
+              <span id="sending-msg">Criando sua solicitação...</span>
+            </div>
+            <div id="err-create" class="alert alert-error" style="display:none">
+              <span>❌</span><span id="err-create-msg">Erro ao criar solicitação.</span>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button class="btn btn-outline" onclick="voltarStep(2)" style="flex:1">← Voltar</button>
+              <button class="btn btn-green" id="btn-step3" onclick="criarSolicitacao()" style="flex:2">
+                Criar Solicitação e Pagar →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <strong>Microcredito On</strong> · CNPJ 54.861.284/0001-30
+  </footer>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // ⚠️ SUBSTITUA pelas suas credenciais Firebase
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    // Expose to global scope
+    window._db = db;
+    window._storage = storage;
+    window._firestoreModules = { collection, query, where, getDocs, addDoc, Timestamp };
+    window._storageModules = { ref, uploadBytes };
+    window._firebaseReady = true;
+    document.dispatchEvent(new Event('firebase-ready'));
+  </script>
+
+  <script src="js/cadastro.js"></script>
+</body>
+</html>

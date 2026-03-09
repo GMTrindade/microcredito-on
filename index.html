@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microcredito On — Crédito Rápido e Seguro</title>
+  <meta name="description" content="Solicite seu microcrédito online de forma rápida, segura e sem burocracia. Microcredito On.">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .features-section { padding: 48px 20px; background: white; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--gray-50);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border: 1px solid var(--gray-100);
+      transition: all 0.2s;
+    }
+    .feature-card:hover {
+      border-color: var(--green-light);
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #0d2e0d, #2d7a2d);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .feature-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 6px;
+    }
+    .feature-text { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+
+    .how-section { padding: 48px 20px; background: var(--gray-50); }
+    .steps-list {
+      max-width: 560px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .how-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      position: relative;
+    }
+    .how-step::after {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 44px;
+      width: 2px;
+      height: calc(100% - 8px);
+      background: linear-gradient(to bottom, var(--green-main), var(--gray-200));
+    }
+    .how-step:last-child::after { display: none; }
+    .how-step-num {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--green-main), var(--green-light));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      color: white;
+      font-size: 14px;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+    .how-step-body { padding: 8px 0 32px; }
+    .how-step-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+    .how-step-text { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+
+    .cta-section {
+      background: linear-gradient(135deg, #0d2e0d, #1a4d1a, #2d7a2d);
+      padding: 56px 20px;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 12px;
+    }
+    .cta-section p { color: rgba(255,255,255,0.7); margin-bottom: 28px; font-size: 15px; }
+
+    .amount-preview {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .amount-chip {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <img src="assets/logo.png" alt="Microcredito On" class="logo">
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">✓ 100% Online · Seguro · Rápido</div>
+    <h1>Microcrédito para<br><span>realizar seus sonhos</span></h1>
+    <p>Solicite seu empréstimo de forma simples, sem sair de casa. Análise rápida e crédito acessível para você.</p>
+    <div class="hero-actions">
+      <a href="cadastro.html" class="btn btn-primary animate-in">
+        💰 Solicitar Empréstimo
+      </a>
+      <a href="status.html" class="btn btn-secondary animate-in delay-1">
+        🔍 Consultar Status
+      </a>
+    </div>
+  </section>
+
+  <!-- Trust -->
+  <div class="trust-section">
+    <div class="trust-item">
+      <div class="trust-icon">🔒</div>
+      <span>Dados protegidos</span>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">⚡</div>
+      <span>Análise ágil</span>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">📱</div>
+      <span>100% digital</span>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">✅</div>
+      <span>CNPJ 54.861.284/0001-30</span>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="features-section">
+    <div class="section-header">
+      <h2>Por que escolher a Microcredito On?</h2>
+      <p>Soluções financeiras pensadas para quem precisa de agilidade</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Processo Simplificado</div>
+        <div class="feature-text">Preencha o formulário online, envie seus documentos e aguarde a análise. Tudo digital.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-title">Segurança Total</div>
+        <div class="feature-text">Seus dados são criptografados e armazenados com segurança em nuvem.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <div class="feature-title">Pagamento via PIX</div>
+        <div class="feature-text">Taxa administrativa paga via PIX de forma instantânea e rastreável.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Acompanhe em Tempo Real</div>
+        <div class="feature-text">Consulte o status da sua solicitação a qualquer momento pelo CPF.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how-section">
+    <div class="section-header">
+      <h2>Como funciona?</h2>
+      <p>Em 4 passos simples você solicita seu crédito</p>
+    </div>
+    <div class="steps-list">
+      <div class="how-step">
+        <div class="how-step-num">1</div>
+        <div class="how-step-body">
+          <div class="how-step-title">Preencha o Cadastro</div>
+          <div class="how-step-text">Informe seus dados pessoais, renda e o valor que deseja solicitar.</div>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">2</div>
+        <div class="how-step-body">
+          <div class="how-step-title">Envie os Documentos</div>
+          <div class="how-step-text">Faça upload do seu RG ou CNH e uma selfie segurando o documento.</div>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">3</div>
+        <div class="how-step-body">
+          <div class="how-step-title">Pague a Taxa Administrativa</div>
+          <div class="how-step-text">Taxa de 10% do valor solicitado, paga via PIX de forma simples e rápida.</div>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">4</div>
+        <div class="how-step-body">
+          <div class="how-step-title">Aguarde a Análise</div>
+          <div class="how-step-text">Nossa equipe analisa sua solicitação e você recebe a resposta rapidamente.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Amounts preview -->
+  <section class="cta-section">
+    <h2>Valores disponíveis</h2>
+    <p>Solicite o valor que você precisa</p>
+    <div class="amount-preview">
+      <span class="amount-chip">R$ 500</span>
+      <span class="amount-chip">R$ 1.000</span>
+      <span class="amount-chip">R$ 2.000</span>
+      <span class="amount-chip">R$ 5.000</span>
+      <span class="amount-chip">R$ 10.000</span>
+    </div>
+    <a href="cadastro.html" class="btn btn-primary">Solicitar Agora →</a>
+  </section>
+
+  <footer class="site-footer">
+    <strong>Microcredito On</strong> · CNPJ 54.861.284/0001-30<br>
+    © 2024 Todos os direitos reservados
+  </footer>
+</body>
+</html>

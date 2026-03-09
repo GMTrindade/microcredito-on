@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento da Taxa — Microcredito On</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html"><img src="assets/logo.png" alt="Microcredito On" class="logo"></a>
+  </header>
+
+  <div class="progress-steps">
+    <div class="step done"><div class="step-dot">✓</div><div class="step-label">Dados</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="step-dot">✓</div><div class="step-label">Documentos</div></div>
+    <div class="step-line done"></div>
+    <div class="step done"><div class="step-dot">✓</div><div class="step-label">Taxa</div></div>
+    <div class="step-line done"></div>
+    <div class="step active"><div class="step-dot">4</div><div class="step-label">Pagamento</div></div>
+  </div>
+
+  <div class="container">
+    <div class="page-content">
+
+      <div class="alert alert-success animate-in">
+        <span>🎉</span>
+        <span><strong>Solicitação criada com sucesso!</strong> Nº <span id="num-solicitacao">-</span></span>
+      </div>
+
+      <!-- Taxa Box -->
+      <div class="taxa-box animate-in delay-1">
+        <div class="taxa-label">Valor da Taxa Administrativa</div>
+        <div class="taxa-value" id="taxa-value">R$ 0,00</div>
+        <div class="taxa-note">10% sobre <span id="valor-solicitado">-</span></div>
+      </div>
+
+      <!-- PIX Card -->
+      <div class="pix-card animate-in delay-2">
+        <div class="pix-card-header">
+          <span>💚</span>
+          <span>Pagamento via PIX — RecargaPay</span>
+        </div>
+        <div class="pix-card-body">
+          <p style="font-size:14px; color:var(--gray-700); margin-bottom:18px; line-height:1.6;">
+            Realize o pagamento da taxa administrativa utilizando o QR Code ou a chave PIX abaixo.
+            Após o pagamento, envie o comprovante.
+          </p>
+
+          <div class="qr-wrapper">
+            <img src="assets/qrcode.png" alt="QR Code PIX">
+          </div>
+
+          <p style="text-align:center; font-size:12px; color:var(--gray-500); margin-bottom:14px;">
+            <strong>Chave PIX (UUID):</strong>
+          </p>
+          <div class="pix-key-box">
+            <span class="pix-key-value">10c918cf-f245-44c3-8a48-0dfbd77a111d</span>
+            <button class="copy-btn" onclick="copiarPIX()">Copiar</button>
+          </div>
+          <div id="copy-msg" style="display:none; text-align:center; color:var(--green-main); font-size:13px; margin-top:8px; font-weight:600;">
+            ✅ Chave PIX copiada!
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Comprovante -->
+      <div class="card animate-in delay-3">
+        <div class="card-body">
+          <div class="card-title">Enviar Comprovante de Pagamento</div>
+          <div class="card-subtitle">Após pagar, envie o comprovante para análise</div>
+
+          <div class="form-group">
+            <div class="upload-area" id="upload-comp-area">
+              <input type="file" id="upload-comprovante" accept="image/jpeg,image/png,application/pdf"
+                onchange="previewComp(this)">
+              <div class="upload-icon">📎</div>
+              <div class="upload-text">Clique ou arraste o comprovante</div>
+              <div class="upload-hint">JPG, PNG ou PDF • Máx. 10MB</div>
+            </div>
+            <div class="upload-preview" id="preview-comp">
+              <span>✅</span>
+              <span class="upload-preview-name" id="preview-comp-name">-</span>
+            </div>
+            <span class="form-error" id="err-comp">Selecione o comprovante de pagamento</span>
+          </div>
+
+          <div id="upload-status" style="display:none" class="alert alert-info">
+            <span class="spinner" style="border-color:rgba(29,78,216,0.3); border-top-color:#1d4ed8;"></span>
+            <span>Enviando comprovante...</span>
+          </div>
+          <div id="upload-err" class="alert alert-error" style="display:none">
+            <span>❌</span><span id="upload-err-msg">Erro ao enviar.</span>
+          </div>
+          <div id="upload-ok" class="alert alert-success" style="display:none">
+            <span>🎉</span>
+            <span><strong>Comprovante enviado!</strong> Sua solicitação está em análise. Você receberá uma resposta em breve.</span>
+          </div>
+
+          <button class="btn btn-green btn-full mt-4" id="btn-enviar" onclick="enviarComprovante()">
+            📤 Enviar Comprovante
+          </button>
+
+          <hr class="divider">
+
+          <button class="btn btn-outline btn-full" id="btn-pdf" onclick="baixarPDF()">
+            📄 Baixar Comprovante em PDF
+          </button>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="status.html" class="doc-link">Consultar status da solicitação →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <strong>Microcredito On</strong> · CNPJ 54.861.284/0001-30
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    const app = initializeApp(firebaseConfig);
+    window._db = getFirestore(app);
+    window._storage = getStorage(app);
+    window._firestoreModules = { collection, query, where, getDocs, updateDoc, doc };
+    window._storageModules = { ref, uploadBytes };
+    window._firebaseReady = true;
+  </script>
+
+  <script src="js/pagamento.js"></script>
+</body>
+</html>
