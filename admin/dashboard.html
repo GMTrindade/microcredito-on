@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin — Microcredito On</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    body { background: var(--gray-100); }
+    .dashboard-body { padding: 24px 16px 60px; max-width: 1100px; margin: 0 auto; }
+    .filter-row {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items: center;
+    }
+    .filter-select {
+      padding: 9px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+    }
+    .filter-input {
+      padding: 9px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      flex: 1; min-width: 180px;
+    }
+    .action-btns { display: flex; gap: 8px; }
+    .btn-sm { padding: 7px 14px; font-size: 13px; min-width: unset; border-radius: 8px; }
+    .empty-state { text-align: center; padding: 48px; color: var(--gray-400); }
+    .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <img src="../assets/logo.png" alt="Microcredito On">
+    <div class="admin-nav">
+      <span class="admin-user" id="admin-user-email">-</span>
+      <button class="btn btn-secondary btn-sm" onclick="sair()">Sair</button>
+    </div>
+  </div>
+
+  <div class="dashboard-body">
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-total">-</div>
+        <div class="stat-label">Total de Solicitações</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-analise" style="color:#3b82f6">-</div>
+        <div class="stat-label">Em Análise</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-aprovados" style="color:var(--green-main)">-</div>
+        <div class="stat-label">Aprovadas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-reprovados" style="color:var(--red)">-</div>
+        <div class="stat-label">Reprovadas</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-row">
+      <input type="text" class="filter-input" id="filter-search" placeholder="🔍 Buscar por nome ou CPF..." oninput="filtrar()">
+      <select class="filter-select" id="filter-status" onchange="filtrar()">
+        <option value="">Todos os status</option>
+        <option value="taxa_pendente">Taxa Pendente</option>
+        <option value="em_analise">Em Análise</option>
+        <option value="aprovado">Aprovado</option>
+        <option value="reprovado">Reprovado</option>
+      </select>
+      <button class="btn btn-green btn-sm" onclick="carregarDados()">↻ Atualizar</button>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading-state" class="empty-state">
+      <div class="empty-state-icon"><span class="spinner" style="width:32px;height:32px;border-width:3px;border-color:rgba(58,158,58,0.2);border-top-color:var(--green-main);"></span></div>
+      <p>Carregando solicitações...</p>
+    </div>
+
+    <!-- Table -->
+    <div id="table-area" style="display:none">
+      <div class="admin-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Nº Solicitação</th>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Valor</th>
+              <th>Taxa</th>
+              <th>Status</th>
+              <th>Data</th>
+              <th>Documentos</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div id="empty-table" class="empty-state" style="display:none">
+        <div class="empty-state-icon">📋</div>
+        <p>Nenhuma solicitação encontrada.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detalhes -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-title">Detalhes da Solicitação</div>
+        <button class="modal-close" onclick="fecharModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <ul class="info-list" id="modal-info"></ul>
+        <div id="modal-docs" style="margin:16px 0;"></div>
+        <div id="modal-actions" style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;"></div>
+        <div id="modal-status-msg" style="display:none; margin-top:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    window._db = db;
+    window._auth = auth;
+    window._storage = storage;
+    window._firestoreModules = { collection, getDocs, updateDoc, doc, orderBy, query };
+    window._storageModules = { ref, getDownloadURL };
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = 'admin.html';
+        return;
+      }
+      document.getElementById('admin-user-email').textContent = user.email;
+      carregarDados();
+    });
+
+    window.sair = async () => {
+      await signOut(auth);
+      window.location.href = 'admin.html';
+    };
+  </script>
+
+  <script src="../js/admin.js"></script>
+</body>
+</html>

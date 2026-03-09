@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Microcredito On</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-card animate-in">
+      <div class="login-logo">
+        <img src="../assets/logo.png" alt="Microcredito On">
+        <p style="font-size:13px; color:var(--gray-500); margin-top:8px;">Painel Administrativo</p>
+      </div>
+
+      <div id="login-err" class="alert alert-error" style="display:none">
+        <span>❌</span><span id="login-err-msg">E-mail ou senha inválidos.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input type="email" id="admin-email" class="form-control" placeholder="admin@microcreditoon.com.br" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input type="password" id="admin-senha" class="form-control" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button class="btn btn-green btn-full mt-4" id="btn-login" onclick="fazerLogin()">
+        Entrar no Painel
+      </button>
+
+      <p style="text-align:center; margin-top:20px; font-size:12px; color:var(--gray-400);">
+        Acesso restrito a administradores
+      </p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    window._auth = auth;
+    window._authModules = { signInWithEmailAndPassword };
+    window._firebaseReady = true;
+  </script>
+
+  <script>
+    document.getElementById('admin-senha').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fazerLogin();
+    });
+
+    async function fazerLogin() {
+      const email = document.getElementById('admin-email').value.trim();
+      const senha = document.getElementById('admin-senha').value;
+      const btn = document.getElementById('btn-login');
+      const errDiv = document.getElementById('login-err');
+      const errMsg = document.getElementById('login-err-msg');
+
+      errDiv.style.display = 'none';
+      if (!email || !senha) {
+        errDiv.style.display = 'flex';
+        errMsg.textContent = 'Preencha e-mail e senha.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Entrando...';
+
+      try {
+        const { signInWithEmailAndPassword } = window._authModules;
+        await signInWithEmailAndPassword(window._auth, email, senha);
+        window.location.href = 'dashboard.html';
+      } catch (e) {
+        errDiv.style.display = 'flex';
+        errMsg.textContent = 'E-mail ou senha inválidos.';
+        btn.disabled = false;
+        btn.innerHTML = 'Entrar no Painel';
+      }
+    }
+    window.fazerLogin = fazerLogin;
+  </script>
+</body>
+</html>
